@@ -1,0 +1,159 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RecallReady Intelligence</title>
+  <style>
+    :root { --ink:#1d2429; --muted:#5d6871; --line:#d8e0e5; --paper:#eef3f4; --panel:#fff; --red:#b84545; --amber:#ad7517; --green:#2e7d5b; --navy:#23384d; --blue:#376fa6; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; color:var(--ink); background:var(--paper); line-height:1.45; }
+    header { background:#fff; border-bottom:1px solid var(--line); padding:32px 24px 22px; }
+    main, footer { max-width:1200px; margin:0 auto; padding:24px; }
+    h1,h2,h3,p { margin-top:0; } h1 { font-size:34px; margin-bottom:8px; } h2 { font-size:22px; } h3 { font-size:16px; margin-bottom:8px; }
+    .lede { max-width:900px; color:var(--muted); font-size:17px; }
+    .grid { display:grid; gap:16px; } .kpis { grid-template-columns:repeat(5,minmax(0,1fr)); margin-bottom:18px; } .two { grid-template-columns:1fr 1fr; } .three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:17px; box-shadow:0 1px 0 rgba(20,30,40,.04); }
+    .kpi .label { color:var(--muted); font-size:13px; } .kpi .value { font-size:27px; font-weight:700; margin-top:8px; }
+    .toolbar { background:#fff; border:1px solid var(--line); border-radius:8px; padding:14px; margin-bottom:18px; }
+    .filters { display:flex; flex-wrap:wrap; gap:10px; align-items:end; } label { color:var(--muted); font-size:13px; display:grid; gap:5px; }
+    select,button { border:1px solid var(--line); background:#fff; border-radius:8px; padding:9px 10px; font:inherit; color:var(--ink); }
+    button { cursor:pointer; }
+    details.section { margin-top:18px; background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+    details > summary { list-style:none; cursor:pointer; background:var(--navy); color:#fff; padding:16px 18px; font-weight:700; display:flex; justify-content:space-between; }
+    details > summary::-webkit-details-marker { display:none; } details > summary::after { content:'>'; transform:rotate(90deg); transition:.18s; } details:not([open]) > summary::after { transform:rotate(0); }
+    .section-body { padding:18px; } .note { color:var(--muted); max-width:940px; }
+    .bar-list { display:grid; gap:10px; } .bar-meta { display:flex; justify-content:space-between; gap:12px; font-size:14px; } .bar-track { height:12px; background:#eef2f4; border-radius:6px; overflow:hidden; } .bar-fill { height:100%; background:var(--blue); border-radius:6px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; } th,td { padding:10px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } th { color:var(--muted); font-size:12px; text-transform:uppercase; }
+    .priority-High { color:var(--red); font-weight:700; } .priority-Medium { color:var(--amber); font-weight:700; } .priority-Low { color:var(--green); font-weight:700; }
+    .badge { display:inline-flex; width:fit-content; border:1px solid var(--line); border-radius:8px; padding:4px 8px; color:var(--muted); font-size:12px; background:#fbfcfc; }
+    .flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; } .step { background:#f7f9fa; border:1px solid var(--line); border-radius:8px; padding:13px; } .step strong { display:block; margin-bottom:5px; }
+    .quote { border-left:3px solid var(--blue); padding-left:12px; color:#26343d; }
+    @media (max-width:900px){ .kpis,.two,.three,.flow{grid-template-columns:1fr;} main,footer{padding:16px;} h1{font-size:27px;} }
+  </style>
+</head>
+<body>
+<header>
+  <h1>RecallReady Intelligence</h1>
+  <p class="lede">A Business Analyst case study using real NHTSA complaint and recall data to turn recurring vehicle issues into service priority queues, owner routing, and process requirements.</p>
+</header>
+<main>
+  <section class="toolbar">
+    <div class="filters">
+      <label>Make<select id="makeFilter"></select></label>
+      <label>Vehicle<select id="vehicleFilter"></select></label>
+      <label>Priority<select id="priorityFilter"><option>All</option><option>High</option><option>Medium</option><option>Low</option></select></label>
+      <label>Owner<select id="ownerFilter"></select></label>
+      <button id="resetButton">Reset</button>
+    </div>
+  </section>
+  <section class="grid kpis" id="kpis"></section>
+
+  <details class="section" open>
+    <summary>1. Executive Overview</summary>
+    <div class="section-body">
+      <p class="note">This section summarizes the data scope and shows where service operations should pay attention first.</p>
+      <section class="grid two">
+        <article class="card"><h2>Priority Queue Mix</h2><div class="bar-list" id="priorityBars"></div></article>
+        <article class="card"><h2>Top Components</h2><div class="bar-list" id="componentBars"></div></article>
+      </section>
+    </div>
+  </details>
+
+  <details class="section" open>
+    <summary>2. Service Priority Queue</summary>
+    <div class="section-body">
+      <p class="note">This is the action queue a service operations manager would use. It converts complaints and recall overlap into owner, SLA, and next action.</p>
+      <table><thead><tr><th>Vehicle</th><th>Component</th><th>Priority</th><th>Owner</th><th>SLA</th><th>Action</th></tr></thead><tbody id="queueRows"></tbody></table>
+    </div>
+  </details>
+
+  <details class="section" open>
+    <summary>3. Issue Pattern Analysis</summary>
+    <div class="section-body">
+      <section class="grid two">
+        <article class="card"><h2>Service Themes</h2><div class="bar-list" id="themeBars"></div></article>
+        <article class="card"><h2>Owner Workload</h2><div class="bar-list" id="ownerBars"></div></article>
+      </section>
+    </div>
+  </details>
+
+  <details class="section" open>
+    <summary>4. BA Workflow & Requirements</summary>
+    <div class="section-body">
+      <p class="note">The BA value is the workflow design: not just what happened, but how the business should route, act, and validate the solution.</p>
+      <div class="flow">
+        <div class="step"><strong>Intake</strong>Complaint or recall enters the system.</div>
+        <div class="step"><strong>Classify</strong>Vehicle, component, theme, and severity are identified.</div>
+        <div class="step"><strong>Prioritize</strong>Score assigns High, Medium, or Low urgency.</div>
+        <div class="step"><strong>Route</strong>Owner team and SLA are assigned.</div>
+        <div class="step"><strong>Act & Monitor</strong>Service action is tracked through closure.</div>
+      </div>
+      <section class="grid three" style="margin-top:16px">
+        <article class="card"><h3>Business Requirements</h3><ul id="requirements"></ul></article>
+        <article class="card"><h3>User Stories</h3><ul id="stories"></ul></article>
+        <article class="card"><h3>UAT Cases</h3><ul id="uat"></ul></article>
+      </section>
+    </div>
+  </details>
+
+  <details class="section" open>
+    <summary>5. Evidence Explorer</summary>
+    <div class="section-body">
+      <p class="note">Real complaint/recall excerpts behind the priority logic.</p>
+      <table><thead><tr><th>Vehicle</th><th>Type</th><th>Component</th><th>Priority</th><th>Evidence</th></tr></thead><tbody id="evidenceRows"></tbody></table>
+    </div>
+  </details>
+</main>
+<footer>Source: NHTSA public complaints and recalls APIs. This is a portfolio analysis and not a mechanical or legal safety assessment.</footer>
+<script>
+const DATA = __DATA_JSON__;
+const queue = DATA.queue || [];
+const evidence = DATA.evidence || [];
+function uniq(arr){ return [...new Set(arr.filter(Boolean))].sort(); }
+function currentRows(){
+  const make = document.getElementById('makeFilter').value;
+  const vehicle = document.getElementById('vehicleFilter').value;
+  const priority = document.getElementById('priorityFilter').value;
+  const owner = document.getElementById('ownerFilter').value;
+  return queue.filter(r => (make==='All'||r.make===make) && (vehicle==='All'||r.vehicle===vehicle) && (priority==='All'||r.priority===priority) && (owner==='All'||r.suggested_owner===owner));
+}
+function countBy(rows,key){ return rows.reduce((a,r)=>{a[r[key]]=(a[r[key]]||0)+1; return a;},{}); }
+function pct(v,t){ return t ? Math.round(v/t*1000)/10 : 0; }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+function renderSelects(){
+  document.getElementById('makeFilter').innerHTML = ['All',...uniq(queue.map(r=>r.make))].map(v=>`<option>${v}</option>`).join('');
+  document.getElementById('vehicleFilter').innerHTML = ['All',...uniq(queue.map(r=>r.vehicle))].map(v=>`<option>${v}</option>`).join('');
+  document.getElementById('ownerFilter').innerHTML = ['All',...uniq(queue.map(r=>r.suggested_owner))].map(v=>`<option>${v}</option>`).join('');
+}
+function renderKpis(){
+  const rows = currentRows();
+  const high = rows.filter(r=>r.priority==='High').length;
+  const kpis = [['Records analyzed',DATA.total_records],['Complaints',DATA.complaint_records],['Recalls',DATA.recall_records],['Queue items',rows.length],['High priority',high]];
+  document.getElementById('kpis').innerHTML = kpis.map(([l,v])=>`<article class="card kpi"><div class="label">${l}</div><div class="value">${v}</div></article>`).join('');
+}
+function renderBars(id,obj,total){
+  const sorted = Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,8); const max = Math.max(...sorted.map(x=>x[1]),1);
+  document.getElementById(id).innerHTML = sorted.map(([k,v])=>`<div><div class="bar-meta"><strong>${escapeHtml(k)}</strong><span>${v} (${pct(v,total)}%)</span></div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(4,v/max*100)}%"></div></div></div>`).join('');
+}
+function renderTables(){
+  const rows = currentRows().slice(0,35);
+  document.getElementById('queueRows').innerHTML = rows.map(r=>`<tr><td>${escapeHtml(r.vehicle)}</td><td>${escapeHtml(r.component)}<br><span class="badge">${escapeHtml(r.service_theme)}</span></td><td class="priority-${r.priority}">${r.priority}<br>${r.priority_score}</td><td>${escapeHtml(r.suggested_owner)}</td><td>${escapeHtml(r.sla)}</td><td>${escapeHtml(r.recommended_action)}</td></tr>`).join('');
+  const vehicles = new Set(rows.map(r=>r.vehicle));
+  document.getElementById('evidenceRows').innerHTML = evidence.filter(e=>vehicles.size===0||vehicles.has(e.vehicle)).slice(0,35).map(e=>`<tr><td>${escapeHtml(e.vehicle)}</td><td>${escapeHtml(e.source_type)}</td><td>${escapeHtml(e.component)}</td><td class="priority-${e.priority}">${escapeHtml(e.priority)}</td><td>${escapeHtml(e.summary)}</td></tr>`).join('');
+}
+function renderDocs(){
+  document.getElementById('requirements').innerHTML = DATA.requirements.map(x=>`<li>${escapeHtml(x)}</li>`).join('');
+  document.getElementById('stories').innerHTML = DATA.user_stories.map(x=>`<li>${escapeHtml(x)}</li>`).join('');
+  document.getElementById('uat').innerHTML = DATA.uat_cases.map(x=>`<li>${escapeHtml(x)}</li>`).join('');
+}
+function renderAll(){
+  const rows = currentRows();
+  renderKpis(); renderBars('priorityBars',countBy(rows,'priority'),rows.length); renderBars('componentBars',countBy(rows,'component'),rows.length); renderBars('themeBars',countBy(rows,'service_theme'),rows.length); renderBars('ownerBars',countBy(rows,'suggested_owner'),rows.length); renderTables(); renderDocs();
+}
+['makeFilter','vehicleFilter','priorityFilter','ownerFilter'].forEach(id=>document.getElementById(id).addEventListener('change',renderAll));
+document.getElementById('resetButton').addEventListener('click',()=>{['makeFilter','vehicleFilter','priorityFilter','ownerFilter'].forEach(id=>document.getElementById(id).value='All'); document.getElementById('priorityFilter').value='All'; renderAll();});
+renderSelects(); renderAll();
+</script>
+</body>
+</html>
