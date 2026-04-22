@@ -4,6 +4,10 @@ Automotive risk intelligence project built using public vehicle complaint and re
 
 This project analyzes complaint and recall records to identify recurring issue patterns, prioritize service actions, and turn raw operational data into decision-ready insights through an interactive dashboard.
 
+```md id="krv5di"
+Note: Dashboard UI is actively being refined; current version reflects the core analytics engine and workflow.
+```
+
 ## Data Source
 
 Public NHTSA complaint and recall datasets.
@@ -24,6 +28,7 @@ Public NHTSA complaint and recall datasets.
 - Service priority queue  
 - Risk segmentation  
 - Decision support views  
+
 
 ## How to Run
 
