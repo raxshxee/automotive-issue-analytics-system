@@ -3,157 +3,284 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RecallReady Intelligence</title>
+  <title>Automotive Issue Analytics System</title>
   <style>
-    :root { --ink:#1d2429; --muted:#5d6871; --line:#d8e0e5; --paper:#eef3f4; --panel:#fff; --red:#b84545; --amber:#ad7517; --green:#2e7d5b; --navy:#23384d; --blue:#376fa6; }
-    * { box-sizing:border-box; }
-    body { margin:0; font-family:Arial, Helvetica, sans-serif; color:var(--ink); background:var(--paper); line-height:1.45; }
-    header { background:#fff; border-bottom:1px solid var(--line); padding:32px 24px 22px; }
-    main, footer { max-width:1200px; margin:0 auto; padding:24px; }
-    h1,h2,h3,p { margin-top:0; } h1 { font-size:34px; margin-bottom:8px; } h2 { font-size:22px; } h3 { font-size:16px; margin-bottom:8px; }
-    .lede { max-width:900px; color:var(--muted); font-size:17px; }
-    .grid { display:grid; gap:16px; } .kpis { grid-template-columns:repeat(5,minmax(0,1fr)); margin-bottom:18px; } .two { grid-template-columns:1fr 1fr; } .three { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:17px; box-shadow:0 1px 0 rgba(20,30,40,.04); }
-    .kpi .label { color:var(--muted); font-size:13px; } .kpi .value { font-size:27px; font-weight:700; margin-top:8px; }
-    .toolbar { background:#fff; border:1px solid var(--line); border-radius:8px; padding:14px; margin-bottom:18px; }
-    .filters { display:flex; flex-wrap:wrap; gap:10px; align-items:end; } label { color:var(--muted); font-size:13px; display:grid; gap:5px; }
-    select,button { border:1px solid var(--line); background:#fff; border-radius:8px; padding:9px 10px; font:inherit; color:var(--ink); }
-    button { cursor:pointer; }
-    details.section { margin-top:18px; background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
-    details > summary { list-style:none; cursor:pointer; background:var(--navy); color:#fff; padding:16px 18px; font-weight:700; display:flex; justify-content:space-between; }
-    details > summary::-webkit-details-marker { display:none; } details > summary::after { content:'>'; transform:rotate(90deg); transition:.18s; } details:not([open]) > summary::after { transform:rotate(0); }
-    .section-body { padding:18px; } .note { color:var(--muted); max-width:940px; }
-    .bar-list { display:grid; gap:10px; } .bar-meta { display:flex; justify-content:space-between; gap:12px; font-size:14px; } .bar-track { height:12px; background:#eef2f4; border-radius:6px; overflow:hidden; } .bar-fill { height:100%; background:var(--blue); border-radius:6px; }
-    table { width:100%; border-collapse:collapse; font-size:14px; } th,td { padding:10px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } th { color:var(--muted); font-size:12px; text-transform:uppercase; }
-    .priority-High { color:var(--red); font-weight:700; } .priority-Medium { color:var(--amber); font-weight:700; } .priority-Low { color:var(--green); font-weight:700; }
-    .badge { display:inline-flex; width:fit-content; border:1px solid var(--line); border-radius:8px; padding:4px 8px; color:var(--muted); font-size:12px; background:#fbfcfc; }
-    .flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; } .step { background:#f7f9fa; border:1px solid var(--line); border-radius:8px; padding:13px; } .step strong { display:block; margin-bottom:5px; }
-    .quote { border-left:3px solid var(--blue); padding-left:12px; color:#26343d; }
-    @media (max-width:900px){ .kpis,.two,.three,.flow{grid-template-columns:1fr;} main,footer{padding:16px;} h1{font-size:27px;} }
+    :root {
+      --steel: #5D5E61;
+      --sand: #d8be9f;
+      --espresso: #281d10;
+      --paper: #f7f3ee;
+      --panel: #fffdf9;
+      --line: #cab8a4;
+      --text: #281d10;
+      --muted: #6f6357;
+      --high: #7b2e1d;
+      --med: #8f6842;
+      --low: #4f5a4d;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Arial, Helvetica, sans-serif; background: linear-gradient(180deg, #f2ebe2 0%, var(--paper) 100%); color: var(--text); }
+    .shell { display:grid; grid-template-columns: 300px minmax(0,1fr); min-height:100vh; }
+    aside { background: var(--espresso); color:#f7ecde; padding:24px 20px; position:sticky; top:0; height:100vh; overflow:auto; }
+    main { padding:24px; }
+    h1,h2,h3,p { margin-top:0; }
+    .brand { font-size:28px; line-height:1.05; margin-bottom:8px; }
+    .subbrand { color:#d8be9f; font-size:13px; margin-bottom:20px; }
+    .side-card { border:1px solid rgba(216,190,159,.25); border-radius:8px; padding:14px; margin-bottom:16px; background:rgba(255,255,255,.03); }
+    .side-card h3 { font-size:14px; color:#fff5e8; margin-bottom:10px; }
+    label { display:grid; gap:6px; font-size:12px; color:#f0dfca; margin-bottom:12px; }
+    input[type="search"], select { width:100%; padding:10px 11px; border-radius:8px; border:1px solid rgba(216,190,159,.35); background:#fbf7f1; color:var(--text); font:inherit; }
+    .mini { font-size:11px; color:#d8be9f; }
+    .hero { display:grid; grid-template-columns: 1.2fr .8fr; gap:18px; margin-bottom:18px; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px; box-shadow:0 1px 0 rgba(40,29,16,.05); }
+    .headline { font-size:34px; margin-bottom:6px; }
+    .chip-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+    .chip { border:1px solid var(--line); border-radius:999px; padding:6px 10px; background:#fff7ee; font-size:12px; color:var(--steel); }
+    .kpis { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:14px; margin-bottom:18px; }
+    .kpi { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px; }
+    .kpi .label { color:var(--muted); font-size:12px; } .kpi .value { font-size:28px; font-weight:700; margin-top:8px; }
+    .workspace { display:grid; grid-template-columns: 1.05fr .95fr; gap:18px; }
+    .stack { display:grid; gap:18px; }
+    .section-title { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin-bottom:12px; }
+    .section-title p { color:var(--muted); font-size:12px; margin:0; }
+    .bar-list { display:grid; gap:10px; }
+    .bar-row { display:grid; gap:6px; }
+    .bar-meta { display:flex; justify-content:space-between; gap:12px; font-size:13px; }
+    .bar-track { height:12px; background:#ece2d5; border-radius:999px; overflow:hidden; }
+    .bar-fill { height:100%; background: linear-gradient(90deg, var(--steel), var(--sand)); }
+    .problems { display:grid; gap:12px; }
+    .problem-card { background:#fff8ef; border:1px solid var(--line); border-radius:8px; padding:14px; }
+    .problem-card h3 { font-size:15px; margin-bottom:6px; } .problem-card .meta { color:var(--muted); font-size:12px; }
+    .rule-grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .rule { border:1px solid var(--line); border-radius:8px; padding:12px; background:#fff8ef; }
+    .rule strong { display:block; margin-bottom:6px; font-size:13px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th,td { text-align:left; vertical-align:top; padding:10px 8px; border-bottom:1px solid var(--line); }
+    th { color:var(--muted); font-size:11px; text-transform:uppercase; }
+    .priority-high { color:var(--high); font-weight:700; }
+    .priority-medium { color:var(--med); font-weight:700; }
+    .priority-low { color:var(--low); font-weight:700; }
+    .evidence { display:grid; gap:10px; max-height:540px; overflow:auto; }
+    .evidence-card { border:1px solid var(--line); border-radius:8px; padding:12px; background:#fffdf9; }
+    .evidence-top { display:flex; justify-content:space-between; gap:12px; font-size:12px; color:var(--muted); margin-bottom:8px; }
+    .evidence-card p { margin-bottom:0; font-size:14px; line-height:1.45; }
+    .war-room { display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-top:18px; }
+    .mini-note { font-size:12px; color:var(--muted); }
+    .tag { display:inline-flex; border-radius:999px; padding:4px 8px; font-size:11px; background:#f0e4d6; color:var(--steel); margin-right:6px; }
+    ul { padding-left:18px; margin-bottom:0; }
+    @media (max-width: 980px) { .shell, .hero, .workspace, .war-room, .kpis, .rule-grid { grid-template-columns: 1fr; } aside { position:static; height:auto; } }
   </style>
 </head>
 <body>
-<header>
-  <h1>RecallReady Intelligence</h1>
-  <p class="lede">A Business Analyst case study using real NHTSA complaint and recall data to turn recurring vehicle issues into service priority queues, owner routing, and process requirements.</p>
-</header>
-<main>
-  <section class="toolbar">
-    <div class="filters">
-      <label>Make<select id="makeFilter"></select></label>
-      <label>Vehicle<select id="vehicleFilter"></select></label>
-      <label>Priority<select id="priorityFilter"><option>All</option><option>High</option><option>Medium</option><option>Low</option></select></label>
-      <label>Owner<select id="ownerFilter"></select></label>
-      <button id="resetButton">Reset</button>
-    </div>
-  </section>
-  <section class="grid kpis" id="kpis"></section>
+<div class="shell">
+  <aside>
+    <div class="brand">Automotive Issue Analytics System</div>
+    <div class="subbrand">Complaint, recall, and functional-impact analysis</div>
 
-  <details class="section" open>
-    <summary>1. Executive Overview</summary>
-    <div class="section-body">
-      <p class="note">This section summarizes the data scope and shows where service operations should pay attention first.</p>
-      <section class="grid two">
-        <article class="card"><h2>Priority Queue Mix</h2><div class="bar-list" id="priorityBars"></div></article>
-        <article class="card"><h2>Top Components</h2><div class="bar-list" id="componentBars"></div></article>
-      </section>
+    <div class="side-card">
+      <h3>Search & Filters</h3>
+      <label>Search
+        <input id="searchInput" type="search" placeholder="screen, brake, steering, dealer refused...">
+      </label>
+      <label>Make
+        <select id="makeFilter"></select>
+      </label>
+      <label>Vehicle
+        <select id="vehicleFilter"></select>
+      </label>
+      <label>Priority
+        <select id="priorityFilter"><option value="All">All</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
+      </label>
+      <label>Functional Impact
+        <select id="impactFilter"></select>
+      </label>
+      <button id="resetButton" style="width:100%; margin-top:4px; padding:11px; border-radius:8px; border:1px solid rgba(216,190,159,.35); background:var(--sand); color:var(--espresso); font-weight:700;">Reset</button>
+      <div class="mini" style="margin-top:10px;">Keyword-sensitive risk model enabled</div>
     </div>
-  </details>
 
-  <details class="section" open>
-    <summary>2. Service Priority Queue</summary>
-    <div class="section-body">
-      <p class="note">This is the action queue a service operations manager would use. It converts complaints and recall overlap into owner, SLA, and next action.</p>
-      <table><thead><tr><th>Vehicle</th><th>Component</th><th>Priority</th><th>Owner</th><th>SLA</th><th>Action</th></tr></thead><tbody id="queueRows"></tbody></table>
+    <div class="side-card">
+      <h3>Views</h3>
+      <div class="mini">Signal bars</div>
+      <div class="mini">Problem patterns</div>
+      <div class="mini">Action queue</div>
+      <div class="mini">Evidence browser</div>
+      <div class="mini">BA design console</div>
     </div>
-  </details>
+  </aside>
 
-  <details class="section" open>
-    <summary>3. Issue Pattern Analysis</summary>
-    <div class="section-body">
-      <section class="grid two">
-        <article class="card"><h2>Service Themes</h2><div class="bar-list" id="themeBars"></div></article>
-        <article class="card"><h2>Owner Workload</h2><div class="bar-list" id="ownerBars"></div></article>
-      </section>
-    </div>
-  </details>
-
-  <details class="section" open>
-    <summary>4. BA Workflow & Requirements</summary>
-    <div class="section-body">
-      <p class="note">The BA value is the workflow design: not just what happened, but how the business should route, act, and validate the solution.</p>
-      <div class="flow">
-        <div class="step"><strong>Intake</strong>Complaint or recall enters the system.</div>
-        <div class="step"><strong>Classify</strong>Vehicle, component, theme, and severity are identified.</div>
-        <div class="step"><strong>Prioritize</strong>Score assigns High, Medium, or Low urgency.</div>
-        <div class="step"><strong>Route</strong>Owner team and SLA are assigned.</div>
-        <div class="step"><strong>Act & Monitor</strong>Service action is tracked through closure.</div>
+  <main>
+    <section class="hero">
+      <div class="panel">
+        <div class="headline">Issue Discovery War Room</div>
+        <div class="chip-row" id="heroChips"></div>
       </div>
-      <section class="grid three" style="margin-top:16px">
-        <article class="card"><h3>Business Requirements</h3><ul id="requirements"></ul></article>
-        <article class="card"><h3>User Stories</h3><ul id="stories"></ul></article>
-        <article class="card"><h3>UAT Cases</h3><ul id="uat"></ul></article>
-      </section>
-    </div>
-  </details>
+      <div class="panel">
+        <div class="section-title"><h2 style="margin-bottom:0">Priority Lens</h2></div>
+        <div class="rule-grid" id="priorityLens"></div>
+      </div>
+    </section>
 
-  <details class="section" open>
-    <summary>5. Evidence Explorer</summary>
-    <div class="section-body">
-      <p class="note">Real complaint/recall excerpts behind the priority logic.</p>
-      <table><thead><tr><th>Vehicle</th><th>Type</th><th>Component</th><th>Priority</th><th>Evidence</th></tr></thead><tbody id="evidenceRows"></tbody></table>
-    </div>
-  </details>
-</main>
-<footer>Source: NHTSA public complaints and recalls APIs. This is a portfolio analysis and not a mechanical or legal safety assessment.</footer>
+    <section class="kpis" id="kpis"></section>
+
+    <section class="workspace">
+      <div class="stack">
+        <div class="panel">
+          <div class="section-title"><div><h2 style="margin-bottom:4px">Signal Bars</h2><p>Current view</p></div></div>
+          <div class="bar-list" id="signalBars"></div>
+        </div>
+        <div class="panel">
+          <div class="section-title"><div><h2 style="margin-bottom:4px">Frequently Dealt With Problems</h2><p>Top issue patterns</p></div></div>
+          <div class="problems" id="problemCards"></div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <div class="section-title"><div><h2 style="margin-bottom:4px">Action Queue</h2><p>Top clusters</p></div></div>
+          <table>
+            <thead><tr><th>Vehicle</th><th>Issue</th><th>Priority</th><th>Owner</th><th>Action</th></tr></thead>
+            <tbody id="queueRows"></tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="section-title"><div><h2 style="margin-bottom:4px">Operational Rules</h2><p>Scoring triggers</p></div></div>
+          <div class="rule-grid" id="ruleGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="war-room">
+      <div class="panel">
+        <div class="section-title"><div><h2 style="margin-bottom:4px">Evidence Browser</h2><p>Matching records</p></div></div>
+        <div class="evidence" id="evidenceList"></div>
+      </div>
+      <div class="panel">
+        <div class="section-title"><div><h2 style="margin-bottom:4px">BA Design Console</h2><p>Requirements, stories, UAT</p></div></div>
+        <h3>Business Requirements</h3>
+        <ul id="requirements"></ul>
+        <h3>User Stories</h3>
+        <ul id="stories"></ul>
+        <h3>UAT Checks</h3>
+        <ul id="uat"></ul>
+      </div>
+    </section>
+  </main>
+</div>
 <script>
 const DATA = __DATA_JSON__;
 const queue = DATA.queue || [];
 const evidence = DATA.evidence || [];
+const frequentProblems = DATA.frequent_problems || [];
+const ruleCards = [
+  { title: 'Control Loss', text: 'Steering, braking, stalling, acceleration, or loss-of-control language' },
+  { title: 'Safety Failure', text: 'Airbag, collision avoidance, seat belt, warning, or braking-system failure' },
+  { title: 'Digital Dependency', text: 'Screen/software issue paired with a critical control-path term' },
+  { title: 'Service Dead-End', text: 'Dealer refusal, backorder, denied repair, or no-remedy language' }
+];
+const lensCards = [
+  { title: 'Records', key: 'total_records' },
+  { title: 'Queue Clusters', key: 'queue_items' },
+  { title: 'High Priority', key: 'high_priority_queue_items' },
+  { title: 'Digital Hits', value: null }
+];
 function uniq(arr){ return [...new Set(arr.filter(Boolean))].sort(); }
-function currentRows(){
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+function filteredEvidence(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
   const make = document.getElementById('makeFilter').value;
   const vehicle = document.getElementById('vehicleFilter').value;
   const priority = document.getElementById('priorityFilter').value;
-  const owner = document.getElementById('ownerFilter').value;
-  return queue.filter(r => (make==='All'||r.make===make) && (vehicle==='All'||r.vehicle===vehicle) && (priority==='All'||r.priority===priority) && (owner==='All'||r.suggested_owner===owner));
+  const impact = document.getElementById('impactFilter').value;
+  return evidence.filter(r =>
+    (make === 'All' || r.make === make) &&
+    (vehicle === 'All' || r.vehicle === vehicle) &&
+    (priority === 'All' || r.priority === priority) &&
+    (impact === 'All' || r.functional_impact === impact) &&
+    (!q || `${r.summary} ${r.component} ${r.functional_impact} ${r.service_theme}`.toLowerCase().includes(q))
+  );
 }
-function countBy(rows,key){ return rows.reduce((a,r)=>{a[r[key]]=(a[r[key]]||0)+1; return a;},{}); }
-function pct(v,t){ return t ? Math.round(v/t*1000)/10 : 0; }
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
-function renderSelects(){
-  document.getElementById('makeFilter').innerHTML = ['All',...uniq(queue.map(r=>r.make))].map(v=>`<option>${v}</option>`).join('');
-  document.getElementById('vehicleFilter').innerHTML = ['All',...uniq(queue.map(r=>r.vehicle))].map(v=>`<option>${v}</option>`).join('');
-  document.getElementById('ownerFilter').innerHTML = ['All',...uniq(queue.map(r=>r.suggested_owner))].map(v=>`<option>${v}</option>`).join('');
+function filteredQueue(){
+  const rows = filteredEvidence();
+  const keys = new Set(rows.map(r => `${r.vehicle}|${r.component}|${r.functional_impact}`));
+  return queue.filter(r => keys.has(`${r.vehicle}|${r.component}|${r.functional_impact}`));
+}
+function countBy(rows, key){ return rows.reduce((acc, row) => { acc[row[key]] = (acc[row[key]] || 0) + 1; return acc; }, {}); }
+function priorityClass(p){ return p === 'High' ? 'priority-high' : p === 'Medium' ? 'priority-medium' : 'priority-low'; }
+function renderFilters(){
+  document.getElementById('makeFilter').innerHTML = ['All', ...uniq(evidence.map(r => r.make))].map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+  document.getElementById('vehicleFilter').innerHTML = ['All', ...uniq(evidence.map(r => r.vehicle))].map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+  document.getElementById('impactFilter').innerHTML = ['All', ...uniq(evidence.map(r => r.functional_impact))].map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+}
+function renderHero(){
+  const chips = [
+    `${DATA.total_records} combined records`,
+    `${DATA.queue_items} queue clusters`,
+    `${DATA.high_priority_queue_items} high-priority clusters`,
+    'functional-impact scoring',
+    'search-first workflow'
+  ];
+  document.getElementById('heroChips').innerHTML = chips.map(c => `<span class="chip">${escapeHtml(c)}</span>`).join('');
+}
+function renderLens(){
+  const rows = filteredEvidence();
+  const digital = rows.filter(r => r.digital_dependency_risk).length;
+  document.getElementById('priorityLens').innerHTML = lensCards.map(card => `<div class="rule"><strong>${escapeHtml(card.title)}</strong>${card.key ? escapeHtml(DATA[card.key]) : digital}</div>`).join('');
 }
 function renderKpis(){
-  const rows = currentRows();
-  const high = rows.filter(r=>r.priority==='High').length;
-  const kpis = [['Records analyzed',DATA.total_records],['Complaints',DATA.complaint_records],['Recalls',DATA.recall_records],['Queue items',rows.length],['High priority',high]];
-  document.getElementById('kpis').innerHTML = kpis.map(([l,v])=>`<article class="card kpi"><div class="label">${l}</div><div class="value">${v}</div></article>`).join('');
+  const rows = filteredEvidence();
+  const queueRows = filteredQueue();
+  const digital = rows.filter(r => r.digital_dependency_risk).length;
+  const kpis = [
+    ['Records in View', rows.length],
+    ['Queue Clusters', queueRows.length],
+    ['High Priority', queueRows.filter(r => r.priority === 'High').length],
+    ['Digital Hits', digital]
+  ];
+  document.getElementById('kpis').innerHTML = kpis.map(([l,v]) => `<article class="kpi"><div class="label">${escapeHtml(l)}</div><div class="value">${v}</div></article>`).join('');
 }
-function renderBars(id,obj,total){
-  const sorted = Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,8); const max = Math.max(...sorted.map(x=>x[1]),1);
-  document.getElementById(id).innerHTML = sorted.map(([k,v])=>`<div><div class="bar-meta"><strong>${escapeHtml(k)}</strong><span>${v} (${pct(v,total)}%)</span></div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(4,v/max*100)}%"></div></div></div>`).join('');
+function renderSignalBars(){
+  const rows = filteredEvidence();
+  const metrics = [
+    ...Object.entries(countBy(rows, 'component')).slice(0,4).map(([k,v])=>({label:`Component: ${k}`, value:v})),
+    ...Object.entries(countBy(rows, 'service_theme')).slice(0,3).map(([k,v])=>({label:`Theme: ${k}`, value:v})),
+    ...Object.entries(countBy(rows, 'functional_impact')).slice(0,3).map(([k,v])=>({label:`Impact: ${k}`, value:v}))
+  ].sort((a,b)=>b.value-a.value).slice(0,8);
+  const max = Math.max(...metrics.map(m => m.value), 1);
+  document.getElementById('signalBars').innerHTML = metrics.map(m => `<div class="bar-row"><div class="bar-meta"><strong>${escapeHtml(m.label)}</strong><span>${m.value}</span></div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, (m.value/max)*100)}%"></div></div></div>`).join('');
 }
-function renderTables(){
-  const rows = currentRows().slice(0,35);
-  document.getElementById('queueRows').innerHTML = rows.map(r=>`<tr><td>${escapeHtml(r.vehicle)}</td><td>${escapeHtml(r.component)}<br><span class="badge">${escapeHtml(r.service_theme)}</span></td><td class="priority-${r.priority}">${r.priority}<br>${r.priority_score}</td><td>${escapeHtml(r.suggested_owner)}</td><td>${escapeHtml(r.sla)}</td><td>${escapeHtml(r.recommended_action)}</td></tr>`).join('');
-  const vehicles = new Set(rows.map(r=>r.vehicle));
-  document.getElementById('evidenceRows').innerHTML = evidence.filter(e=>vehicles.size===0||vehicles.has(e.vehicle)).slice(0,35).map(e=>`<tr><td>${escapeHtml(e.vehicle)}</td><td>${escapeHtml(e.source_type)}</td><td>${escapeHtml(e.component)}</td><td class="priority-${e.priority}">${escapeHtml(e.priority)}</td><td>${escapeHtml(e.summary)}</td></tr>`).join('');
+function renderProblems(){
+  const rows = filteredEvidence();
+  const localCounts = countBy(rows, 'functional_impact');
+  const localThemeCounts = countBy(rows, 'service_theme');
+  const cards = frequentProblems.filter(p => (localCounts[p.functional_impact] || localThemeCounts[p.service_theme])).slice(0,6);
+  document.getElementById('problemCards').innerHTML = cards.map(p => `<article class="problem-card"><h3>${escapeHtml(p.functional_impact)}</h3><div class="meta">${escapeHtml(p.component)} | ${escapeHtml(p.service_theme)} | ${p.count}</div></article>`).join('');
+}
+function renderQueue(){
+  const rows = filteredQueue().slice(0,18);
+  document.getElementById('queueRows').innerHTML = rows.map(r => `<tr><td>${escapeHtml(r.vehicle)}<div class="mini-note">${escapeHtml(r.component)}</div></td><td><span class="tag">${escapeHtml(r.service_theme)}</span><span class="tag">${escapeHtml(r.functional_impact)}</span></td><td class="${priorityClass(r.priority)}">${escapeHtml(r.priority)}<br>${r.priority_score}</td><td>${escapeHtml(r.suggested_owner)}<div class="mini-note">${escapeHtml(r.sla)}</div></td><td>${escapeHtml(r.recommended_action)}</td></tr>`).join('');
+}
+function renderRules(){
+  document.getElementById('ruleGrid').innerHTML = ruleCards.map(card => `<div class="rule"><strong>${escapeHtml(card.title)}</strong>${escapeHtml(card.text)}</div>`).join('');
+}
+function renderEvidence(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const rows = filteredEvidence().slice(0,28);
+  const highlight = (text) => {
+    const safe = escapeHtml(text);
+    if (!q) return safe;
+    try { return safe.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'ig'), '<mark style="background:#d8be9f; color:#281d10; padding:0 2px;">$1</mark>'); } catch { return safe; }
+  };
+  document.getElementById('evidenceList').innerHTML = rows.map(r => `<article class="evidence-card"><div class="evidence-top"><span>${escapeHtml(r.vehicle)}</span><span class="${priorityClass(r.priority)}">${escapeHtml(r.priority)} | ${r.priority_score}</span></div><div class="mini-note" style="margin-bottom:8px;">${escapeHtml(r.component)} | ${escapeHtml(r.functional_impact)} | ${escapeHtml(r.service_theme)}</div><p>${highlight(r.summary)}</p></article>`).join('');
 }
 function renderDocs(){
-  document.getElementById('requirements').innerHTML = DATA.requirements.map(x=>`<li>${escapeHtml(x)}</li>`).join('');
-  document.getElementById('stories').innerHTML = DATA.user_stories.map(x=>`<li>${escapeHtml(x)}</li>`).join('');
-  document.getElementById('uat').innerHTML = DATA.uat_cases.map(x=>`<li>${escapeHtml(x)}</li>`).join('');
+  document.getElementById('requirements').innerHTML = DATA.requirements.map(x => `<li>${escapeHtml(x)}</li>`).join('');
+  document.getElementById('stories').innerHTML = DATA.user_stories.map(x => `<li>${escapeHtml(x)}</li>`).join('');
+  document.getElementById('uat').innerHTML = DATA.uat_cases.map(x => `<li>${escapeHtml(x)}</li>`).join('');
 }
-function renderAll(){
-  const rows = currentRows();
-  renderKpis(); renderBars('priorityBars',countBy(rows,'priority'),rows.length); renderBars('componentBars',countBy(rows,'component'),rows.length); renderBars('themeBars',countBy(rows,'service_theme'),rows.length); renderBars('ownerBars',countBy(rows,'suggested_owner'),rows.length); renderTables(); renderDocs();
-}
-['makeFilter','vehicleFilter','priorityFilter','ownerFilter'].forEach(id=>document.getElementById(id).addEventListener('change',renderAll));
-document.getElementById('resetButton').addEventListener('click',()=>{['makeFilter','vehicleFilter','priorityFilter','ownerFilter'].forEach(id=>document.getElementById(id).value='All'); document.getElementById('priorityFilter').value='All'; renderAll();});
-renderSelects(); renderAll();
+function renderAll(){ renderHero(); renderLens(); renderKpis(); renderSignalBars(); renderProblems(); renderQueue(); renderRules(); renderEvidence(); renderDocs(); }
+['searchInput','makeFilter','vehicleFilter','priorityFilter','impactFilter'].forEach(id => document.getElementById(id).addEventListener('input', renderAll));
+document.getElementById('resetButton').addEventListener('click', () => { document.getElementById('searchInput').value=''; document.getElementById('makeFilter').value='All'; document.getElementById('vehicleFilter').value='All'; document.getElementById('priorityFilter').value='All'; document.getElementById('impactFilter').value='All'; renderAll(); });
+renderFilters(); renderRules(); renderAll();
 </script>
 </body>
 </html>
