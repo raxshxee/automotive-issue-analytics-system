@@ -1,36 +1,41 @@
 # Automotive Issue Analytics System
 
-Automotive risk intelligence project built using public vehicle complaint and recall data.
+Search-first business analysis project built on real NHTSA vehicle complaint and recall data.
 
-This project analyzes complaint and recall records to identify recurring issue patterns, prioritize service actions, and turn raw operational data into decision-ready insights through an interactive dashboard.
+## Overview
 
-```md id="krv5di"
-Note: Dashboard UI is actively being refined; current version reflects the core analytics engine and workflow.
+The project analyzes recurring vehicle issues across selected 2021-2022 models, classifies complaint language into functional-impact signals, and converts the results into an action queue with owner routing, SLA logic, and evidence review.
+
+## Dataset
+
+- 4,214 combined complaint and recall records
+- 4,152 complaint records
+- 62 recall records
+- 10 vehicle make/model/year combinations
+
+Vehicles included:
+
+- Toyota Camry
+- Honda Civic
+- Chevrolet Silverado 1500
+- Tesla Model 3
+- Hyundai Tucson
+
+
+## Data Sources
+
+- NHTSA Complaints API
+- NHTSA Recalls API
+
+## Run
+
+```bash
+python -m pip install -r requirements.txt
+python scripts/1_collect_nhtsa_data.py
+python scripts/2_analyze_service_risk.py
 ```
 
-## Data Source
-
-Public NHTSA complaint and recall datasets.
-
-## Project Outputs
-
-- `dashboard.html` – Interactive dashboard  
-- `summary.json` – Aggregated metrics  
-- `service_priority_queue.csv` – Prioritized issue queue  
-- Python scripts for data collection and analysis  
-- Business analysis documentation  
-
-## Dashboard Features
-
-- KPI overview  
-- Complaint trend analysis  
-- Recall intelligence  
-- Service priority queue  
-- Risk segmentation  
-- Decision support views  
-
-
-## How to Run
+Open `dashboard.html` in a browser.
 
 ```bash
 python -m pip install -r requirements.txt
